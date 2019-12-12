@@ -22,6 +22,7 @@ use Nette\Application;
 use Latte\Runtime;
 
 use Tracy;
+use Nette\DI\Container;
 
 final class Panel implements Tracy\IBarPanel
 {
@@ -45,12 +46,15 @@ final class Panel implements Tracy\IBarPanel
 	 */
 	private $application;
 
+	private $wwwDir;
+
 	/**
 	 * @param Application\Application $application
 	 */
-	public function __construct(Application\Application $application)
+	public function __construct(Application\Application $application, Container $container)
 	{
 		$this->application = $application;
+		$this->wwwDir = $container->getParameters()['wwwDir'];
 	}
 
 	/**
@@ -93,7 +97,7 @@ final class Panel implements Tracy\IBarPanel
 	private function link(string $file, string $type, int $timestamp) : string
 	{
 		$link = $this->getPresenter()->link(':IPub:AssetsLoader:assets', ['type' => $type, 'id' => $file, 'timestamp' => $timestamp]);
-		$name = str_replace(WWW_DIR, '', $file);
+		$name = str_replace($this->wwwDir, '', $file);
 
 		return '<a href="' . $link . '" target="_blank">' . $name . '</a>';
 	}
