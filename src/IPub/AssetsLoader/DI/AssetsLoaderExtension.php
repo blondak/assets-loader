@@ -49,16 +49,18 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 				'files'   => [],
 				'content' => []
 			],
-			'joinFiles' => TRUE,
+		    'compiler' => 'IPub\AssetsLoader\Compilers\CssCompiler',
+		    'joinFiles' => TRUE,
 		],
 		self::TYPE_JS  => [
 			'gzip'      => FALSE,
-			'files'     => [],
+		    'files'     => [],
 			'filters'   => [
 				'files'   => [],
 				'content' => []
 			],
-			'joinFiles' => TRUE,
+		    'compiler' => 'IPub\AssetsLoader\Compilers\JsCompiler',
+		    'joinFiles' => TRUE,
 		],
 		'assets'       => [],
 		'debugger'     => '%debugMode%',
@@ -73,10 +75,11 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 		self::TYPE_CSS => [
 			'files'     => [],
 			'filters'   => [
-				'files'   => [],
+			    'files'   => [],
 				'content' => [],
 			],
-			'joinFiles' => TRUE,
+		    'compiler' => 'IPub\AssetsLoader\Compilers\CssCompiler',
+		    'joinFiles' => TRUE,
 		],
 		self::TYPE_JS  => [
 			'files'     => [],
@@ -84,7 +87,8 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 				'files'   => [],
 				'content' => [],
 			],
-			'joinFiles' => TRUE
+		    'compiler' => 'IPub\AssetsLoader\Compilers\JsCompiler',
+		    'joinFiles' => TRUE
 		],
 		'packages'     => []
 	];
@@ -250,13 +254,12 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 				}
 			}
 		}
-
 		// Create compilers
 		foreach ($this->assets as $name => $assetConfig) {
-			// Assets are splitted into types CSS/JS
+		    // Assets are splitted into types CSS/JS
 			foreach ([self::TYPE_CSS, self::TYPE_JS] as $type) {
 				$compiler = $builder->addDefinition($this->prefix($type . ucfirst($name) . 'Compiler'))
-					->setType('IPub\AssetsLoader\Compilers\\' . ucfirst($type) . 'Compiler')
+				    ->setType($assetConfig[$type]['compiler'])
 					->setArguments([$this->prefix('@cache.assets')]);
 
 				// Add content filters
