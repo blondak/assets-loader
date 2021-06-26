@@ -40,8 +40,12 @@
 
 		"latte/latte"	: "~2.4",
 
-		"leafo/lessphp": "^0.5.0"
 	},
+	
+	"suggest": {
+		"leafo/lessphp": "^0.5.0",
+		"marcusschwarz/lesserphp": "^0.6.0"
+	}
 
 	"require-dev": {
 		"nette/bootstrap"		: "~2.4",
