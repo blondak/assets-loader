@@ -38,8 +38,7 @@
 		"nette/http"		: "~2.4",
 		"nette/utils"		: "~2.4",
 
-		"latte/latte"	: "~2.4",
-
+		"latte/latte"	: "~2.4"
 	},
 	
 	"suggest": {
