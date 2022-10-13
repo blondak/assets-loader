@@ -92,7 +92,7 @@ class AssetResponse implements Application\IResponse
 			$httpResponse->setHeader('Etag', $this->etag);
 		}
 
-		$httpResponse->setExpiration('10 years');
+		$httpResponse->setExpiration(Http\IResponse::PERMANENT);
 
 		if (($inm = $httpRequest->getHeader('if-none-match')) && $inm == $this->etag) {
 			$httpResponse->setCode(Http\IResponse::S304_NOT_MODIFIED);

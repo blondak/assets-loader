@@ -49,16 +49,18 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 				'files'   => [],
 				'content' => []
 			],
-			'joinFiles' => TRUE,
+		    'compiler' => 'IPub\AssetsLoader\Compilers\CssCompiler',
+		    'joinFiles' => TRUE,
 		],
 		self::TYPE_JS  => [
 			'gzip'      => FALSE,
-			'files'     => [],
+		    'files'     => [],
 			'filters'   => [
 				'files'   => [],
 				'content' => []
 			],
-			'joinFiles' => TRUE,
+		    'compiler' => 'IPub\AssetsLoader\Compilers\JsCompiler',
+		    'joinFiles' => TRUE,
 		],
 		'assets'       => [],
 		'debugger'     => '%debugMode%',
@@ -73,10 +75,11 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 		self::TYPE_CSS => [
 			'files'     => [],
 			'filters'   => [
-				'files'   => [],
+			    'files'   => [],
 				'content' => [],
 			],
-			'joinFiles' => TRUE,
+		    'compiler' => 'IPub\AssetsLoader\Compilers\CssCompiler',
+		    'joinFiles' => TRUE,
 		],
 		self::TYPE_JS  => [
 			'files'     => [],
@@ -84,7 +87,8 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 				'files'   => [],
 				'content' => [],
 			],
-			'joinFiles' => TRUE
+		    'compiler' => 'IPub\AssetsLoader\Compilers\JsCompiler',
+		    'joinFiles' => TRUE
 		],
 		'packages'     => []
 	];
@@ -93,11 +97,6 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 	 * @var array
 	 */
 	private $assets = [];
-
-	public function getConfigSchema(): Nette\Schema\Schema
-	{
-	    return Nette\Schema\Expect::array($this->defaults)->castTo('array');
-	}
 
 	public function loadConfiguration() : void
 	{
@@ -115,7 +114,7 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 			->setType(Application\Route::class)
 			->setArguments([$config['routes']['assets'], ['presenter' => 'IPub:AssetsLoader', 'action' => 'assets']])
 			->setAutowired(FALSE)
-		;
+			->setInject(FALSE);
 
 		// Add route to router
 		$builder->getDefinition('router')
@@ -126,7 +125,7 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 			->setType(Application\Route::class)
 			->setArguments([$config['routes']['files'], ['presenter' => 'IPub:AssetsLoader', 'action' => 'files']])
 			->setAutowired(FALSE)
-		;
+			->setInject(FALSE);
 
 		// Add route to router
 		$builder->getDefinition('router')
@@ -143,12 +142,12 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 		$builder->addDefinition($this->prefix('cache.assets'))
 			->setType(Caching\AssetCache::class)
 			->setArguments(['@cacheStorage', 'IPub.AssetsLoader.Assets'])
-	   ;
+			->setInject(FALSE);
 
 		$builder->addDefinition($this->prefix('cache.files'))
 			->setType(Caching\FileCache::class)
 			->setArguments(['@cacheStorage', 'IPub.AssetsLoader.Files'])
-		;
+			->setInject(FALSE);
 
 		// Collect all assets
 		foreach ($config['assets'] as $name => $assetConfig) {
@@ -255,20 +254,19 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 				}
 			}
 		}
-
 		// Create compilers
 		foreach ($this->assets as $name => $assetConfig) {
-			// Assets are splitted into types CSS/JS
+		    // Assets are splitted into types CSS/JS
 			foreach ([self::TYPE_CSS, self::TYPE_JS] as $type) {
 				$compiler = $builder->addDefinition($this->prefix($type . ucfirst($name) . 'Compiler'))
-					->setType('IPub\AssetsLoader\Compilers\\' . ucfirst($type) . 'Compiler')
+				    ->setType($assetConfig[$type]['compiler'])
 					->setArguments([$this->prefix('@cache.assets')]);
 
 				// Add content filters
 				foreach ($assetConfig[$type]['filters']['content'] as $filter) {
 					// Check if filter is defined as service name
 					if (substr($filter, 0, 1) != '@') {
-						$filter = $builder->getDefinition($this->prefix('filters.content.' . $filter));
+						$filter = $builder->getDefinition($this->prefix('assetsloader.filters.content.' . $filter));
 					}
 
 					// Add filter to compiler
@@ -279,7 +277,7 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 				foreach ($assetConfig[$type]['filters']['files'] as $filter) {
 					// Check if filter is defined as service name
 					if (substr($filter, 0, 1) != '@') {
-						$filter = $builder->getDefinition($this->prefix('filters.files.' . $filter));
+						$filter = $builder->getDefinition($this->prefix('assetsloader.filters.files.' . $filter));
 					}
 
 					// Add filter to compiler
@@ -301,8 +299,6 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 		}
 	}
 
-
-
 	/**
 	 * @param string $name
 	 */
@@ -310,7 +306,7 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 	{
 		$config = $this->loadFromFile(__DIR__ . '/config/' . $name . '.neon');
 
-		$this->loadDefinitionsFromConfig(isset($config['services']) ? $config['services'] : []);
+		$this->compiler->loadDefinitions($this->getContainerBuilder(), isset($config['services']) ? $config['services'] : [], $this->prefix($name));
 	}
 
 	/**

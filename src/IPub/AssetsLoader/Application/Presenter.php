@@ -115,10 +115,9 @@ class AssetsLoaderPresenter implements Application\IPresenter
 		$this->request = $request;
 
 		if ($this->httpRequest && $this->router && !$this->httpRequest->isAjax() && ($request->isMethod('get') || $request->isMethod('head'))) {
+			$refUrl = clone $this->httpRequest->getUrl();
 
-		    $refUrl = $this->httpRequest->getUrl()->withPath($this->httpRequest->getUrl()->getScriptPath());
-
-			$url = $this->router->constructUrl($request->toArray(), $refUrl);
+			$url = $this->router->constructUrl($request, $refUrl->setPath($refUrl->getScriptPath()));
 
 			if ($url !== NULL && !$this->httpRequest->getUrl()->isEqual($url)) {
 				return new Application\Responses\RedirectResponse($url, Http\IResponse::S301_MOVED_PERMANENTLY);
