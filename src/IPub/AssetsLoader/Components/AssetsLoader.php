@@ -55,8 +55,6 @@ abstract class AssetsLoader extends Application\UI\Control
 	 */
 	public function __construct(Compilers\Compiler $compiler, Entities\IAsset $set)
 	{
-		parent::__construct();
-
 		$this->compiler = $compiler;
 		$this->asset = $set;
 
