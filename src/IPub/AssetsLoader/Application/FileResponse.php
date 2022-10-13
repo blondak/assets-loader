@@ -60,7 +60,7 @@ class FileResponse implements Application\IResponse
 	 */
 	public function send(Http\IRequest $httpRequest, Http\IResponse $httpResponse) : void
 	{
-		$httpResponse->setExpiration(Http\IResponse::PERMANENT);
+		$httpResponse->setExpiration('10 years');
 
 		if (($inm = $httpRequest->getHeader('if-none-match'))) {
 			$httpResponse->setCode(Http\IResponse::S304_NOT_MODIFIED);
@@ -68,9 +68,11 @@ class FileResponse implements Application\IResponse
 			return;
 		}
 
-		$httpResponse->setContentType(AssetsLoader\Files\MimeMapper::getMimeFromFilename($this->filePath));
+		if ($mimeType = AssetsLoader\Files\MimeMapper::getMimeFromFilename($this->filePath)){
+		    $httpResponse->setContentType($mimeType);
+		}
 		$httpResponse->setHeader('Content-Transfer-Encoding', 'binary');
-		$httpResponse->setHeader('Content-Length', filesize($this->filePath));
+		$httpResponse->setHeader('Content-Length', (string)filesize($this->filePath));
 		$httpResponse->setHeader('Content-Disposition', 'attachment; filename="' . basename($this->filePath) . '"');
 
 		$httpResponse->setHeader('Access-Control-Allow-Origin', '*');
