@@ -1,4 +1,5 @@
 <?php
+
 /**
  * IFilter.php
  *
@@ -12,15 +13,15 @@
  * @date           16.01.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Filters;
 
 interface IFilter
 {
-	/**
-	 * Define filter types
-	 */
-	public const TYPE_FILES = 'files';
-	public const TYPE_CONTENT = 'content';
+    /**
+     * Define filter types
+     */
+    public const TYPE_FILES = 'files';
+    public const TYPE_CONTENT = 'content';
 }

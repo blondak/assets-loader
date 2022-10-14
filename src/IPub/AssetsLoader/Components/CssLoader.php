@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CssLoader.php
  *
@@ -12,13 +13,12 @@
  * @date           08.06.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Components;
 
 use Nette;
 use Nette\Utils;
-
 use IPub\AssetsLoader\Entities;
 use IPub\AssetsLoader\Exceptions;
 use IPub\AssetsLoader\Files;
@@ -47,7 +47,7 @@ class CssLoader extends AssetsLoader
      *
      * @return void
      */
-    public function setTitle(string $title) : void
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -57,7 +57,7 @@ class CssLoader extends AssetsLoader
      *
      * @return string
      */
-    public function getTitle() : string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -69,7 +69,7 @@ class CssLoader extends AssetsLoader
      *
      * @return void
      */
-    public function setAlternate($alternate) : void
+    public function setAlternate($alternate): void
     {
         $this->alternate = $alternate;
     }
@@ -79,7 +79,7 @@ class CssLoader extends AssetsLoader
      *
      * @return bool
      */
-    public function isAlternate() : bool
+    public function isAlternate(): bool
     {
         return $this->alternate;
     }
@@ -92,13 +92,13 @@ class CssLoader extends AssetsLoader
      *
      * @return Utils\Html
      */
-    public function getElement(string $source, ?string $media = null) : Utils\Html
+    public function getElement(string $source, ?string $media = null): Utils\Html
     {
         return Utils\Html::el('link')
             ->appendAttribute('rel', 'stylesheet' . ($this->isAlternate() ? ' alternate' : ''))
             ->appendAttribute('type', $this->contentType)
             ->appendAttribute('title', $this->title)
-            ->appendAttribute('media', !trim($media?:'') ? 'all' : $media)
+            ->appendAttribute('media', !trim($media ?: '') ? 'all' : $media)
             ->href($source);
     }
 
@@ -107,7 +107,7 @@ class CssLoader extends AssetsLoader
      *
      * @throws Nette\Application\UI\InvalidLinkException
      */
-    public function renderFiles() : void
+    public function renderFiles(): void
     {
         // Remote files
         foreach ($this->files->getRemoteFiles() as $file) {
@@ -151,7 +151,7 @@ class CssLoader extends AssetsLoader
      * @throws Exceptions\InvalidStateException
      * @throws Nette\Application\UI\InvalidLinkException
      */
-    public function getLink() : string
+    public function getLink(): string
     {
         $hasArgs = func_num_args() > 0;
 
@@ -168,7 +168,7 @@ class CssLoader extends AssetsLoader
             $args = reset($args);
 
             // Create new collection from arguments
-            $newFiles = new Files\FilesCollection;
+            $newFiles = new Files\FilesCollection();
             $newFiles->addFiles($args);
 
             // Create new files collection

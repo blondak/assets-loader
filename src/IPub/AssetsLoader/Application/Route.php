@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Route.php
  *
@@ -12,7 +13,7 @@
  * @date           15.01.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Application;
 
@@ -21,36 +22,36 @@ use Nette\Utils;
 
 class Route extends Application\Routers\Route
 {
-	/**
-	 * @param Application\IRouter $router
-	 * @param Route $extensionRoute
-	 *
-	 * @return void
-	 *
-	 * @throws Utils\AssertionException
-	 */
-	public static function prependTo(Application\IRouter &$router, self $extensionRoute) : void
-	{
-		if (!$router instanceof Application\Routers\RouteList) {
-			throw new Utils\AssertionException(
-				'If you want to use IPub\AssetsLoader then your main router ' .
-				'must be an instance of Nette\Application\Routers\RouteList'
-			);
-		}
+    /**
+     * @param Application\IRouter $router
+     * @param Route $extensionRoute
+     *
+     * @return void
+     *
+     * @throws Utils\AssertionException
+     */
+    public static function prependTo(Application\IRouter &$router, self $extensionRoute): void
+    {
+        if (!$router instanceof Application\Routers\RouteList) {
+            throw new Utils\AssertionException(
+                'If you want to use IPub\AssetsLoader then your main router ' .
+                'must be an instance of Nette\Application\Routers\RouteList'
+            );
+        }
 
-		// Add extension route to router
-		$router[] = $extensionRoute;
+        // Add extension route to router
+        $router[] = $extensionRoute;
 
-		$lastKey = count($router) - 1;
+        $lastKey = count($router) - 1;
 
-		foreach ($router as $i => $route) {
-			if ($i === $lastKey) {
-				break;
-			}
+        foreach ($router as $i => $route) {
+            if ($i === $lastKey) {
+                break;
+            }
 
-			$router[$i + 1] = $route;
-		}
+            $router[$i + 1] = $route;
+        }
 
-		$router[0] = $extensionRoute;
-	}
+        $router[0] = $extensionRoute;
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * AssetResponse.php
  *
@@ -12,7 +13,7 @@
  * @date           15.01.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Application;
 
@@ -22,86 +23,86 @@ use Nette\Http;
 
 class AssetResponse implements Application\IResponse
 {
-	/**
-	 * Implement nette smart magic
-	 */
-	use Nette\SmartObject;
+    /**
+     * Implement nette smart magic
+     */
+    use Nette\SmartObject;
 
-	/**
-	 * @var string
-	 */
-	private $content;
+    /**
+     * @var string
+     */
+    private $content;
 
-	/**
-	 * @var string
-	 */
-	private $contentType;
+    /**
+     * @var string
+     */
+    private $contentType;
 
-	/**
-	 * @var string
-	 */
-	private $etag;
+    /**
+     * @var string
+     */
+    private $etag;
 
-	/**
-	 * @param string $content
-	 * @param string $contentType
-	 * @param string $eTag
-	 */
-	public function __construct(string $content, string $contentType, ?string $eTag = NULL)
-	{
-		$this->content = $content;
-		$this->contentType = $contentType;
-		$this->etag = $eTag;
-	}
+    /**
+     * @param string $content
+     * @param string $contentType
+     * @param string $eTag
+     */
+    public function __construct(string $content, string $contentType, ?string $eTag = null)
+    {
+        $this->content = $content;
+        $this->contentType = $contentType;
+        $this->etag = $eTag;
+    }
 
-	/**
-	 * @return string
-	 */
-	final public function getContent() : string
-	{
-		return $this->content;
-	}
+    /**
+     * @return string
+     */
+    final public function getContent(): string
+    {
+        return $this->content;
+    }
 
-	/**
-	 * @return string
-	 */
-	final public function getContentType() : string
-	{
-		return $this->contentType;
-	}
+    /**
+     * @return string
+     */
+    final public function getContentType(): string
+    {
+        return $this->contentType;
+    }
 
-	/**
-	 * @return string|NULL
-	 */
-	final public function getEtag() : ?string
-	{
-		return $this->etag;
-	}
+    /**
+     * @return string|NULL
+     */
+    final public function getEtag(): ?string
+    {
+        return $this->etag;
+    }
 
-	/**
-	 * Sends response to output.
-	 *
-	 * @param Http\IRequest $httpRequest
-	 * @param Http\IResponse $httpResponse
-	 *
-	 * @return void
-	 */
-	public function send(Http\IRequest $httpRequest, Http\IResponse $httpResponse) : void
-	{
-		if (strlen($this->etag)) {
-			$httpResponse->setHeader('Etag', $this->etag);
-		}
+    /**
+     * Sends response to output.
+     *
+     * @param Http\IRequest $httpRequest
+     * @param Http\IResponse $httpResponse
+     *
+     * @return void
+     */
+    public function send(Http\IRequest $httpRequest, Http\IResponse $httpResponse): void
+    {
+        if (strlen($this->etag)) {
+            $httpResponse->setHeader('Etag', $this->etag);
+        }
 
-		$httpResponse->setExpiration('10 years');
+        $httpResponse->setExpiration('10 years');
 
-		if (($inm = $httpRequest->getHeader('if-none-match')) && $inm == $this->etag) {
-			$httpResponse->setCode(Http\IResponse::S304_NOT_MODIFIED);
+        if (($inm = $httpRequest->getHeader('if-none-match')) && $inm == $this->etag) {
+            $httpResponse->setCode(Http\IResponse::S304_NOT_MODIFIED);
 
-			return;
-		}
+            return;
+        }
 
-		$httpResponse->setContentType($this->contentType);
+        $httpResponse->setContentType($this->contentType);
 
-		echo $this->content;
-	}
+        echo $this->content;
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * IFilesCollection.php
  *
@@ -12,7 +13,7 @@
  * @date           29.12.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Files;
 
@@ -20,74 +21,74 @@ use IPub\AssetsLoader\Entities;
 
 interface IFilesCollection
 {
-	/**
-	 * @param array|\Traversable $files array list of files
-	 *
-	 * @return void
-	 */
-	public function setFiles($files) : void;
+    /**
+     * @param array|\Traversable $files array list of files
+     *
+     * @return void
+     */
+    public function setFiles($files): void;
 
-	/**
-	 * @param array|\Traversable $files array list of files
-	 *
-	 * @return void
-	 */
-	public function addFiles($files) : void;
+    /**
+     * @param array|\Traversable $files array list of files
+     *
+     * @return void
+     */
+    public function addFiles($files): void;
 
-	/**
-	 * @return array
-	 */
-	public function getFiles() : array;
+    /**
+     * @return array
+     */
+    public function getFiles(): array;
 
-	/**
-	 * @param string|Entities\IFile $file
-	 *
-	 * @return void
-	 */
-	public function addFile($file) : void;
+    /**
+     * @param string|Entities\IFile $file
+     *
+     * @return void
+     */
+    public function addFile($file): void;
 
-	/**
-	 * @param string $file
-	 *
-	 * @return void
-	 */
-	public function removeFile(string $file) : void;
+    /**
+     * @param string $file
+     *
+     * @return void
+     */
+    public function removeFile(string $file): void;
 
-	/**
-	 * @param array $files list of files
-	 *
-	 * @return void
-	 */
-	public function removeFiles(array $files) : void;
+    /**
+     * @param array $files list of files
+     *
+     * @return void
+     */
+    public function removeFiles(array $files): void;
 
-	/**
-	 * @param array|\Traversable $files array list of files
-	 *
-	 * @return void
-	 */
-	public function setRemoteFiles($files) : void;
+    /**
+     * @param array|\Traversable $files array list of files
+     *
+     * @return void
+     */
+    public function setRemoteFiles($files): void;
 
-	/**
-	 * @return array
-	 */
-	public function getRemoteFiles() : array;
+    /**
+     * @return array
+     */
+    public function getRemoteFiles(): array;
 
-	/**
-	 * @param string $file URL address
-	 *
-	 * @return void
-	 */
-	public function addRemoteFile(string $file) : void;
+    /**
+     * @param string $file URL address
+     *
+     * @return void
+     */
+    public function addRemoteFile(string $file): void;
 
-	/**
-	 * Remove all files
-	 *
-	 * @return void
-	 */
-	public function clear() : void;
+    /**
+     * Remove all files
+     *
+     * @return void
+     */
+    public function clear(): void;
 
-	/**
-	 * @return string
-	 */
-	public function getRoot() : string;
+    /**
+     * @return string
+     */
+    public function getRoot(): string;
 }

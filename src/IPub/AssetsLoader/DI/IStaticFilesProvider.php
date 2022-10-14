@@ -1,4 +1,5 @@
 <?php
+
 /**
  * IStaticFilesProvider.php
  *
@@ -12,16 +13,16 @@
  * @date           30.12.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\DI;
 
 interface IStaticFilesProvider
 {
-	/**
-	 * Return array of static files
-	 *
-	 * @return array
-	 */
-	function getStaticFiles() : array;
+    /**
+     * Return array of static files
+     *
+     * @return array
+     */
+    function getStaticFiles(): array;
 }

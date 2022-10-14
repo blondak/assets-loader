@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Path.php
  *
@@ -12,37 +13,36 @@
  * @date           29.12.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Files;
 
 class Path
 {
-	/**
-	 * @param string $path
-	 *
-	 * @return string
-	 */
-	public static function normalize(string $path) : string
-	{
-		$path = strtr($path, '\\', '/');
-		$root = (strpos($path, '/') === 0) ? '/' : '';
-		$pieces = explode('/', trim($path, '/'));
-		$res = [];
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
+    public static function normalize(string $path): string
+    {
+        $path = strtr($path, '\\', '/');
+        $root = (strpos($path, '/') === 0) ? '/' : '';
+        $pieces = explode('/', trim($path, '/'));
+        $res = [];
 
-		foreach ($pieces as $piece) {
-			if ($piece === '.' || empty($piece)) {
-				continue;
-			}
+        foreach ($pieces as $piece) {
+            if ($piece === '.' || empty($piece)) {
+                continue;
+            }
 
-			if ($piece === '..') {
-				array_pop($res);
+            if ($piece === '..') {
+                array_pop($res);
+            } else {
+                array_push($res, $piece);
+            }
+        }
 
-			} else {
-				array_push($res, $piece);
-			}
-		}
-
-		return $root . implode('/', $res);
-	}
+        return $root . implode('/', $res);
+    }
 }

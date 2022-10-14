@@ -1,4 +1,5 @@
 <?php
+
 /**
  * IException.php
  *
@@ -12,7 +13,7 @@
  * @date           16.01.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Exceptions;
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Asset.php
  *
@@ -12,117 +13,116 @@
  * @date           16.01.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Entities;
 
 use Nette;
-
 use IPub\AssetsLoader\Files;
 
 class Asset implements IAsset
 {
-	/**
-	 * Implement nette smart magic
-	 */
-	use Nette\SmartObject;
+    /**
+     * Implement nette smart magic
+     */
+    use Nette\SmartObject;
 
-	/**
-	 * @var string
-	 */
-	protected $name;
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
-	 * @var Files\IFilesCollection
-	 */
-	protected $files;
+    /**
+     * @var Files\IFilesCollection
+     */
+    protected $files;
 
-	/**
-	 * @var bool
-	 */
-	protected $joinFiles = TRUE;
+    /**
+     * @var bool
+     */
+    protected $joinFiles = true;
 
-	/**
-	 * @var bool
-	 */
-	protected $gzip = FALSE;
+    /**
+     * @var bool
+     */
+    protected $gzip = false;
 
-	public function __construct()
-	{
-		$this->files = new Files\FilesCollection;
-	}
+    public function __construct()
+    {
+        $this->files = new Files\FilesCollection();
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setName(string $name) : void
-	{
-		$this->name = $name;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getName() : string
-	{
-		return $this->name;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setFiles(array $files) : void
-	{
-		// Add files into collection
-		$this->files->addFiles($files);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function setFiles(array $files): void
+    {
+        // Add files into collection
+        $this->files->addFiles($files);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function addFile($file) : void
-	{
-		// Add file into collection
-		$this->files->addFile($file);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function addFile($file): void
+    {
+        // Add file into collection
+        $this->files->addFile($file);
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getFiles() : Files\IFilesCollection
-	{
-		return $this->files;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getFiles(): Files\IFilesCollection
+    {
+        return $this->files;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setJoinFiles(bool $joinFiles) : void
-	{
-		$this->joinFiles = $joinFiles;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function setJoinFiles(bool $joinFiles): void
+    {
+        $this->joinFiles = $joinFiles;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getJoinFiles() : bool
-	{
-		return $this->joinFiles;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getJoinFiles(): bool
+    {
+        return $this->joinFiles;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function setGzip(bool $gzip) : void
-	{
-		$this->gzip = $gzip;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function setGzip(bool $gzip): void
+    {
+        $this->gzip = $gzip;
+    }
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function getGzip() : bool
-	{
-		return $this->gzip;
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function getGzip(): bool
+    {
+        return $this->gzip;
+    }
 }

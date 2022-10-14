@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CssUrlsFilter.php
  *
@@ -14,12 +15,11 @@
  * @date           29.12.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Filters\Files;
 
 use Nette\Application;
-
 use IPub\AssetsLoader\Caching;
 use IPub\AssetsLoader\Compilers;
 use IPub\AssetsLoader\Files;
@@ -57,7 +57,7 @@ class CssUrlsFilter extends FilesFilter
      *
      * @return string
      */
-    public function __invoke(string $code, Compilers\Compiler $compiler, string $file) : string
+    public function __invoke(string $code, Compilers\Compiler $compiler, string $file): string
     {
         $self = $this;
 
@@ -74,7 +74,7 @@ class CssUrlsFilter extends FilesFilter
      *
      * @return string
      */
-    public function absolutizeUrl(string $url, string $cssFile) : string
+    public function absolutizeUrl(string $url, string $cssFile): string
     {
         // Is already absolute
         if (preg_match('/^([a-z]+:\/)?\//', $url)) {
@@ -88,7 +88,7 @@ class CssUrlsFilter extends FilesFilter
         $url = preg_replace('/\?.*/', '', $url);
 
         // Create full file path
-        $filePath = realpath(rtrim(dirname(realpath($cssFile)?:''), '/') . '/' . $url);
+        $filePath = realpath(rtrim(dirname(realpath($cssFile) ?: ''), '/') . '/' . $url);
 
         // Check if file exists
         if (!$filePath || !file_exists($filePath)) {
@@ -128,7 +128,7 @@ class CssUrlsFilter extends FilesFilter
     /**
      * @return Application\IPresenter|NULL
      */
-    private function getPresenter() : ?Application\IPresenter
+    private function getPresenter(): ?Application\IPresenter
     {
         return $this->application->getPresenter();
     }
@@ -138,7 +138,7 @@ class CssUrlsFilter extends FilesFilter
      *
      * @return string
      */
-    private function getHash(string $file) : string
+    private function getHash(string $file): string
     {
         $tmp = $file . filesize($file);
 

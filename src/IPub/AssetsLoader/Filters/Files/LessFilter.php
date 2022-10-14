@@ -1,4 +1,5 @@
 <?php
+
 /**
  * LessFilter.php
  *
@@ -12,7 +13,7 @@
  * @date           29.12.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Filters\Files;
 
@@ -26,55 +27,55 @@ use IPub\AssetsLoader\Compilers;
  */
 class LessFilter extends FilesFilter
 {
-	/**
-	 * Less compiler instance
-	 *
-	 * @var \lessc|NULL
-	 */
-	private $lc = NULL;
+    /**
+     * Less compiler instance
+     *
+     * @var \lessc|NULL
+     */
+    private $lc = null;
 
-	/**
-	 * @param \lessc|NULL $lc
-	 */
-	public function __construct(\lessc $lc = NULL)
-	{
-		$this->lc = $lc;
-	}
+    /**
+     * @param \lessc|NULL $lc
+     */
+    public function __construct(\lessc $lc = null)
+    {
+        $this->lc = $lc;
+    }
 
-	/**
-	 * Invoke filter
-	 *
-	 * @param string $code
-	 * @param Compilers\Compiler $compiler
-	 * @param string $file
-	 *
-	 * @return string
-	 *
-	 * @throws \exception
-	 */
-	public function __invoke(string $code, Compilers\Compiler $compiler, string $file) : string
-	{
-		if (pathinfo($file, PATHINFO_EXTENSION) === 'less') {
-			$this->getLessC()->importDir = pathinfo($file, PATHINFO_DIRNAME) . '/';
+    /**
+     * Invoke filter
+     *
+     * @param string $code
+     * @param Compilers\Compiler $compiler
+     * @param string $file
+     *
+     * @return string
+     *
+     * @throws \exception
+     */
+    public function __invoke(string $code, Compilers\Compiler $compiler, string $file): string
+    {
+        if (pathinfo($file, PATHINFO_EXTENSION) === 'less') {
+            $this->getLessC()->importDir = pathinfo($file, PATHINFO_DIRNAME) . '/';
 
-			return $this->getLessC()->parse($code);
-		}
+            return $this->getLessC()->parse($code);
+        }
 
-		return $code;
-	}
+        return $code;
+    }
 
-	/**
-	 * Get less compiler
-	 *
-	 * @return \lessc
-	 */
-	private function getLessC() : \lessc
-	{
-		// Lazy loading
-		if (!$this->lc) {
-			$this->lc = new \lessc();
-		}
+    /**
+     * Get less compiler
+     *
+     * @return \lessc
+     */
+    private function getLessC(): \lessc
+    {
+        // Lazy loading
+        if (!$this->lc) {
+            $this->lc = new \lessc();
+        }
 
-		return $this->lc;
-	}
+        return $this->lc;
+    }
 }

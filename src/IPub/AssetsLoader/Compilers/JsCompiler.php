@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JsCompiler.php
  *
@@ -12,21 +13,21 @@
  * @date           29.12.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Compilers;
 
 class JsCompiler extends Compiler
 {
-	/**
-	 * @var string
-	 */
-	protected $type = self::TYPE_JS;
+    /**
+     * @var string
+     */
+    protected $type = self::TYPE_JS;
 
-	/**
-	 * Compressed file name
-	 *
-	 * @var string
-	 */
-	protected $filename = 'js-%s.js';
+    /**
+     * Compressed file name
+     *
+     * @var string
+     */
+    protected $filename = 'js-%s.js';
 }

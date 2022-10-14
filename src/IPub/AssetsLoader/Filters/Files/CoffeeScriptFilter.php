@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CoffeeScriptFilter.php
  *
@@ -12,7 +13,7 @@
  * @date           29.12.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Filters\Files;
 
@@ -26,58 +27,58 @@ use IPub\AssetsLoader\Compilers;
  */
 class CoffeeScriptFilter extends FilesFilter
 {
-	/**
-	 * @var string path to coffee bin
-	 */
-	private $bin;
+    /**
+     * @var string path to coffee bin
+     */
+    private $bin;
 
-	/**
-	 * @var bool
-	 */
-	private $bare = FALSE;
+    /**
+     * @var bool
+     */
+    private $bare = false;
 
-	/**
-	 * @param string
-	 */
-	public function __construct($bin = 'coffee')
-	{
-		$this->bin = $bin;
-	}
+    /**
+     * @param string
+     */
+    public function __construct($bin = 'coffee')
+    {
+        $this->bin = $bin;
+    }
 
-	/**
-	 * Invoke filter
-	 *
-	 * @param string $code
-	 * @param Compilers\Compiler $compiler
-	 * @param string $file
-	 *
-	 * @return string
-	 */
-	public function __invoke(string $code, Compilers\Compiler $compiler, string $file) : string
-	{
-		if (pathinfo($file, PATHINFO_EXTENSION) === 'coffee') {
-			$code = $this->compileCoffee($code);
-		}
+    /**
+     * Invoke filter
+     *
+     * @param string $code
+     * @param Compilers\Compiler $compiler
+     * @param string $file
+     *
+     * @return string
+     */
+    public function __invoke(string $code, Compilers\Compiler $compiler, string $file): string
+    {
+        if (pathinfo($file, PATHINFO_EXTENSION) === 'coffee') {
+            $code = $this->compileCoffee($code);
+        }
 
-		return $code;
-	}
+        return $code;
+    }
 
-	/**
-	 * Compile coffe script
-	 *
-	 * @param string
-	 * @param bool|NULL
-	 *
-	 * @return string
-	 */
-	private function compileCoffee(string $source, ?bool $bare = NULL) : string
-	{
-		if ($bare === NULL) {
-			$bare = $this->bare;
-		}
+    /**
+     * Compile coffe script
+     *
+     * @param string
+     * @param bool|NULL
+     *
+     * @return string
+     */
+    private function compileCoffee(string $source, ?bool $bare = null): string
+    {
+        if ($bare === null) {
+            $bare = $this->bare;
+        }
 
-		$cmd = $this->bin . ' -p -s' . ($bare ? ' -b' : '');
+        $cmd = $this->bin . ' -p -s' . ($bare ? ' -b' : '');
 
-		return $this->run($cmd, $source);
-	}
+        return $this->run($cmd, $source);
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ScriptCompressor.php
  *
@@ -15,7 +16,7 @@
  * @date           08.06.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Filters\Content;
 
@@ -24,329 +25,329 @@ use IPub\AssetsLoader\Filters;
 
 class ScriptCompressor implements IContentFilter, Filters\IFilter
 {
-	/**
-	 * @var int
-	 */
-	public $ORD_LF = 10;
+    /**
+     * @var int
+     */
+    public $ORD_LF = 10;
 
-	/**
-	 * @var int
-	 */
-	public $ORD_SPACE = 32;
+    /**
+     * @var int
+     */
+    public $ORD_SPACE = 32;
 
-	/**
-	 * @var string
-	 */
-	public $a = '';
+    /**
+     * @var string
+     */
+    public $a = '';
 
-	/**
-	 * @var string
-	 */
-	public $b = '';
+    /**
+     * @var string
+     */
+    public $b = '';
 
-	/**
-	 * @var string
-	 */
-	public $input = '';
+    /**
+     * @var string
+     */
+    public $input = '';
 
-	/**
-	 * @var int
-	 */
-	public $inputIndex = 0;
+    /**
+     * @var int
+     */
+    public $inputIndex = 0;
 
-	/**
-	 * @var int
-	 */
-	public $inputLength = 0;
+    /**
+     * @var int
+     */
+    public $inputLength = 0;
 
-	/**
-	 * @var string|NULL
-	 */
-	public $lookAhead = NULL;
+    /**
+     * @var string|NULL
+     */
+    public $lookAhead = null;
 
-	/**
-	 * @var string
-	 */
-	public $output = '';
+    /**
+     * @var string
+     */
+    public $output = '';
 
-	/**
-	 * @var bool
-	 */
-	public $error = FALSE;
+    /**
+     * @var bool
+     */
+    public $error = false;
 
-	/**
-	 * Minify a Javascript string
-	 *
-	 * @param string $code
-	 * @param Compilers\Compiler $compiler
-	 *
-	 * @return string
-	 */
-	public function __invoke(string $code, Compilers\Compiler $compiler) : string
-	{
-		$this->input = str_replace("\r\n", "\n", $code);
-		$this->inputLength = strlen($this->input);
-		$this->a = '';
-		$this->b = '';
-		$this->inputIndex = 0;
-		$this->lookAhead = NULL;
-		$this->output = '';
-		$this->error = FALSE;
+    /**
+     * Minify a Javascript string
+     *
+     * @param string $code
+     * @param Compilers\Compiler $compiler
+     *
+     * @return string
+     */
+    public function __invoke(string $code, Compilers\Compiler $compiler): string
+    {
+        $this->input = str_replace("\r\n", "\n", $code);
+        $this->inputLength = strlen($this->input);
+        $this->a = '';
+        $this->b = '';
+        $this->inputIndex = 0;
+        $this->lookAhead = null;
+        $this->output = '';
+        $this->error = false;
 
-		$minified = trim($this->min());
+        $minified = trim($this->min());
 
-		return $this->error ? $code : $minified;
-	}
+        return $this->error ? $code : $minified;
+    }
 
-	// -- Instance Methods ---------------------------------------------
+    // -- Instance Methods ---------------------------------------------
 
-	/**
-	 * @param int $d
-	 *
-	 * @return void
-	 */
-	private function action(int $d) : void
-	{
-		switch ($d) {
-			case 1:
-				$this->output .= $this->a;
+    /**
+     * @param int $d
+     *
+     * @return void
+     */
+    private function action(int $d): void
+    {
+        switch ($d) {
+            case 1:
+                $this->output .= $this->a;
 
-			case 2:
-				$this->a = $this->b;
+            case 2:
+                $this->a = $this->b;
 
-				if ($this->a === "'" || $this->a === '"') {
-					for (; ;) {
-						$this->output .= $this->a;
-						$this->a = $this->get();
+                if ($this->a === "'" || $this->a === '"') {
+                    for (;;) {
+                        $this->output .= $this->a;
+                        $this->a = $this->get();
 
-						if ($this->a === $this->b) {
-							break;
-						}
+                        if ($this->a === $this->b) {
+                            break;
+                        }
 
-						if (ord($this->a) <= $this->ORD_LF) {
-							//Unterminated string literal.
-							$this->error = TRUE;
+                        if (ord($this->a) <= $this->ORD_LF) {
+                            //Unterminated string literal.
+                            $this->error = true;
 
-							return;
-						}
+                            return;
+                        }
 
-						if ($this->a === '\\') {
-							$this->output .= $this->a;
-							$this->a = $this->get();
-						}
-					}
-				}
+                        if ($this->a === '\\') {
+                            $this->output .= $this->a;
+                            $this->a = $this->get();
+                        }
+                    }
+                }
 
-			case 3:
-				$this->b = $this->next();
+            case 3:
+                $this->b = $this->next();
 
-				if ($this->b === '/' && (
-						$this->a === '(' || $this->a === ',' || $this->a === '=' ||
-						$this->a === ':' || $this->a === '[' || $this->a === '!' ||
-						$this->a === '&' || $this->a === '|' || $this->a === '?')) {
+                if (
+                    $this->b === '/' && (
+                        $this->a === '(' || $this->a === ',' || $this->a === '=' ||
+                        $this->a === ':' || $this->a === '[' || $this->a === '!' ||
+                        $this->a === '&' || $this->a === '|' || $this->a === '?')
+                ) {
+                    $this->output .= $this->a . $this->b;
 
-					$this->output .= $this->a . $this->b;
+                    for (;;) {
+                        $this->a = $this->get();
 
-					for (; ;) {
-						$this->a = $this->get();
+                        if ($this->a === '/') {
+                            break;
+                        } elseif ($this->a === '\\') {
+                            $this->output .= $this->a;
+                            $this->a = $this->get();
+                        } elseif (ord($this->a) <= $this->ORD_LF) {
+                            //Unterminated regular expression literal.
+                            $this->error = true;
 
-						if ($this->a === '/') {
-							break;
-						} elseif ($this->a === '\\') {
-							$this->output .= $this->a;
-							$this->a = $this->get();
-						} elseif (ord($this->a) <= $this->ORD_LF) {
-							//Unterminated regular expression literal.
-							$this->error = TRUE;
+                            return;
+                        }
 
-							return;
-						}
+                        $this->output .= $this->a;
+                    }
 
-						$this->output .= $this->a;
-					}
+                    $this->b = $this->next();
+                }
+        }
+    }
 
-					$this->b = $this->next();
-				}
-		}
-	}
+    /**
+     * @return string|NULL
+     */
+    private function get(): ?string
+    {
+        $c = $this->lookAhead;
 
-	/**
-	 * @return string|NULL
-	 */
-	private function get() : ?string
-	{
-		$c = $this->lookAhead;
+        $this->lookAhead = null;
 
-		$this->lookAhead = NULL;
+        if ($c === null) {
+            if ($this->inputIndex < $this->inputLength) {
+                $c = substr($this->input, $this->inputIndex, 1);
+                $this->inputIndex += 1;
+            } else {
+                $c = null;
+            }
+        }
 
-		if ($c === NULL) {
-			if ($this->inputIndex < $this->inputLength) {
-				$c = substr($this->input, $this->inputIndex, 1);
-				$this->inputIndex += 1;
+        if ($c === "\r") {
+            return "\n";
+        }
 
-			} else {
-				$c = NULL;
-			}
-		}
+        if ($c === null || $c === "\n" || ord($c) >= $this->ORD_SPACE) {
+            return $c;
+        }
 
-		if ($c === "\r") {
-			return "\n";
-		}
+        return ' ';
+    }
 
-		if ($c === NULL || $c === "\n" || ord($c) >= $this->ORD_SPACE) {
-			return $c;
-		}
+    /**
+     * @param string $c
+     *
+     * @return bool
+     */
+    private function isAlphaNum(string $c): bool
+    {
+        return ord($c) > 126 || $c === '\\' || preg_match('/^[\w\$]$/', $c) === 1;
+    }
 
-		return ' ';
-	}
+    /**
+     * @return string
+     */
+    private function min(): string
+    {
+        $this->a = "\n";
+        $this->action(3);
 
-	/**
-	 * @param string $c
-	 *
-	 * @return bool
-	 */
-	private function isAlphaNum(string $c) : bool
-	{
-		return ord($c) > 126 || $c === '\\' || preg_match('/^[\w\$]$/', $c) === 1;
-	}
+        while ($this->a !== null && !$this->error) {
+            switch ($this->a) {
+                case ' ':
+                    if ($this->isAlphaNum($this->b)) {
+                        $this->action(1);
+                    } else {
+                        $this->action(2);
+                    }
+                    break;
 
-	/**
-	 * @return string
-	 */
-	private function min() : string
-	{
-		$this->a = "\n";
-		$this->action(3);
+                case "\n":
+                    switch ($this->b) {
+                        case '{':
+                        case '[':
+                        case '(':
+                        case '+':
+                        case '-':
+                            $this->action(1);
+                            break;
 
-		while ($this->a !== NULL && !$this->error) {
-			switch ($this->a) {
-				case ' ':
-					if ($this->isAlphaNum($this->b)) {
-						$this->action(1);
-					} else {
-						$this->action(2);
-					}
-					break;
+                        case ' ':
+                            $this->action(3);
+                            break;
 
-				case "\n":
-					switch ($this->b) {
-						case '{':
-						case '[':
-						case '(':
-						case '+':
-						case '-':
-							$this->action(1);
-							break;
+                        default:
+                            if ($this->isAlphaNum($this->b)) {
+                                $this->action(1);
+                            } else {
+                                $this->action(2);
+                            }
+                    }
+                    break;
 
-						case ' ':
-							$this->action(3);
-							break;
+                default:
+                    switch ($this->b) {
+                        case ' ':
+                            if ($this->isAlphaNum($this->a)) {
+                                $this->action(1);
+                                break;
+                            }
 
-						default:
-							if ($this->isAlphaNum($this->b)) {
-								$this->action(1);
-							} else {
-								$this->action(2);
-							}
-					}
-					break;
+                            $this->action(3);
+                            break;
 
-				default:
-					switch ($this->b) {
-						case ' ':
-							if ($this->isAlphaNum($this->a)) {
-								$this->action(1);
-								break;
-							}
+                        case "\n":
+                            switch ($this->a) {
+                                case '}':
+                                case ']':
+                                case ')':
+                                case '+':
+                                case '-':
+                                case '"':
+                                case "'":
+                                    $this->action(1);
+                                    break;
 
-							$this->action(3);
-							break;
+                                default:
+                                    if ($this->isAlphaNum($this->a)) {
+                                        $this->action(1);
+                                    } else {
+                                        $this->action(3);
+                                    }
+                            }
+                            break;
 
-						case "\n":
-							switch ($this->a) {
-								case '}':
-								case ']':
-								case ')':
-								case '+':
-								case '-':
-								case '"':
-								case "'":
-									$this->action(1);
-									break;
+                        default:
+                            $this->action(1);
+                            break;
+                    }
+            }
+        }
 
-								default:
-									if ($this->isAlphaNum($this->a)) {
-										$this->action(1);
-									} else {
-										$this->action(3);
-									}
-							}
-							break;
+        return $this->output;
+    }
 
-						default:
-							$this->action(1);
-							break;
-					}
-			}
-		}
+    /**
+     * @return string|NULL
+     */
+    private function next()
+    {
+        $c = $this->get();
 
-		return $this->output;
-	}
+        if ($c === '/') {
+            switch ($this->peek()) {
+                case '/':
+                    for (;;) {
+                        $c = $this->get();
 
-	/**
-	 * @return string|NULL
-	 */
-	private function next()
-	{
-		$c = $this->get();
+                        if (ord($c) <= $this->ORD_LF) {
+                            return $c;
+                        }
+                    }
 
-		if ($c === '/') {
-			switch ($this->peek()) {
-				case '/':
-					for (; ;) {
-						$c = $this->get();
+                case '*':
+                    $this->get();
 
-						if (ord($c) <= $this->ORD_LF) {
-							return $c;
-						}
-					}
+                    for (;;) {
+                        switch ($this->get()) {
+                            case '*':
+                                if ($this->peek() === '/') {
+                                    $this->get();
 
-				case '*':
-					$this->get();
+                                    return ' ';
+                                }
+                                break;
 
-					for (; ;) {
-						switch ($this->get()) {
-							case '*':
-								if ($this->peek() === '/') {
-									$this->get();
+                            case null:
+                                //Unterminated comment.
+                                $this->error = true;
 
-									return ' ';
-								}
-								break;
+                                return null;
+                        }
+                    }
 
-							case NULL:
-								//Unterminated comment.
-								$this->error = TRUE;
+                default:
+                    return $c;
+            }
+        }
 
-								return NULL;
-						}
-					}
+        return $c;
+    }
 
-				default:
-					return $c;
-			}
-		}
+    /**
+     * @return string|NULL
+     */
+    private function peek(): ?string
+    {
+        $this->lookAhead = $this->get();
 
-		return $c;
-	}
-
-	/**
-	 * @return string|NULL
-	 */
-	private function peek() : ?string
-	{
-		$this->lookAhead = $this->get();
-
-		return $this->lookAhead;
-	}
+        return $this->lookAhead;
+    }
 }

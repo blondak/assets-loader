@@ -1,4 +1,5 @@
 <?php
+
 /**
  * FileCache.php
  *
@@ -12,7 +13,7 @@
  * @date           22.01.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Caching;
 
@@ -20,42 +21,42 @@ use Nette\Caching;
 
 class FileCache extends Caching\Cache
 {
-	/**
-	 * Define content constants
-	 */
-	public const CONTENT = 'content';
-	public const ETAG = 'Etag';
+    /**
+     * Define content constants
+     */
+    public const CONTENT = 'content';
+    public const ETAG = 'Etag';
 
-	/**
-	 * Retrieves the specified item from the cache or NULL if the key is not found.
-	 *
-	 * @param string $key
-	 *
-	 * @return array
-	 */
-	public function getItem(string $key) : array
-	{
-		// Load item from cache storage
-		$item = $this->load($key);
+    /**
+     * Retrieves the specified item from the cache or NULL if the key is not found.
+     *
+     * @param string $key
+     *
+     * @return array
+     */
+    public function getItem(string $key): array
+    {
+        // Load item from cache storage
+        $item = $this->load($key);
 
-		// Get content string
-		$content = $item[self::CONTENT];
+        // Get content string
+        $content = $item[self::CONTENT];
 
-		return [
-			self::CONTENT => $content,
-			self::ETAG    => md5($content),
-		];
-	}
+        return [
+            self::CONTENT => $content,
+            self::ETAG    => md5($content),
+        ];
+    }
 
-	/**
-	 * Remove all items cached by extension
-	 *
-	 * @param array $conditions
-	 *
-	 * @return void
-	 */
-	public function clean(array $conditions = NULL) : void
-	{
-		parent::clean([self::TAGS => ['ipub.assetsloader']]);
-	}
+    /**
+     * Remove all items cached by extension
+     *
+     * @param array $conditions
+     *
+     * @return void
+     */
+    public function clean(array $conditions = null): void
+    {
+        parent::clean([self::TAGS => ['ipub.assetsloader']]);
+    }
 }

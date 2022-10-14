@@ -1,4 +1,5 @@
 <?php
+
 /**
  * StyleCompressor.php
  *
@@ -15,7 +16,7 @@
  * @date           08.06.13
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\AssetsLoader\Filters\Content;
 
@@ -24,46 +25,46 @@ use IPub\AssetsLoader\Filters;
 
 class StyleCompressor implements IContentFilter, Filters\IFilter
 {
-	/**
-	 * @var bool Are we "in" a hack?
-	 *
-	 * I.e. are some browsers targetted until the next comment?
-	 */
-	private $_inHack = FALSE;
+    /**
+     * @var bool Are we "in" a hack?
+     *
+     * I.e. are some browsers targetted until the next comment?
+     */
+    private $_inHack = false;
 
-	/**
-	 * Minify a CSS string
-	 *
-	 * @param string $code
-	 * @param Compilers\Compiler $compiler
-	 *
-	 * @return string
-	 */
-	public function __invoke(string $code, Compilers\Compiler $compiler) : string
-	{
-		$code = str_replace("\r\n", "\n", $code);
+    /**
+     * Minify a CSS string
+     *
+     * @param string $code
+     * @param Compilers\Compiler $compiler
+     *
+     * @return string
+     */
+    public function __invoke(string $code, Compilers\Compiler $compiler): string
+    {
+        $code = str_replace("\r\n", "\n", $code);
 
-		// preserve empty comment after '>'
-		// http://www.webdevout.net/css-hacks#in_css-selectors
-		$code = preg_replace('@>/\\*\\s*\\*/@', '>/*keep*/', $code);
+        // preserve empty comment after '>'
+        // http://www.webdevout.net/css-hacks#in_css-selectors
+        $code = preg_replace('@>/\\*\\s*\\*/@', '>/*keep*/', $code);
 
-		// preserve empty comment between property and value
-		// http://css-discuss.incutio.com/?page=BoxModelHack
-		$code = preg_replace('@/\\*\\s*\\*/\\s*:@', '/*keep*/:', $code);
-		$code = preg_replace('@:\\s*/\\*\\s*\\*/@', ':/*keep*/', $code);
+        // preserve empty comment between property and value
+        // http://css-discuss.incutio.com/?page=BoxModelHack
+        $code = preg_replace('@/\\*\\s*\\*/\\s*:@', '/*keep*/:', $code);
+        $code = preg_replace('@:\\s*/\\*\\s*\\*/@', ':/*keep*/', $code);
 
-		// apply callback to all valid comments (and strip out surrounding ws
-		$code = preg_replace_callback('@\\s*/\\*([\\s\\S]*?)\\*/\\s*@', [$this, 'commentCB'], $code);
+        // apply callback to all valid comments (and strip out surrounding ws
+        $code = preg_replace_callback('@\\s*/\\*([\\s\\S]*?)\\*/\\s*@', [$this, 'commentCB'], $code);
 
-		// remove ws around { } and last semicolon in declaration block
-		$code = preg_replace('/\\s*{\\s*/', '{', $code);
-		$code = preg_replace('/;?\\s*}\\s*/', '}', $code);
+        // remove ws around { } and last semicolon in declaration block
+        $code = preg_replace('/\\s*{\\s*/', '{', $code);
+        $code = preg_replace('/;?\\s*}\\s*/', '}', $code);
 
-		// remove ws surrounding semicolons
-		$code = preg_replace('/\\s*;\\s*/', ';', $code);
+        // remove ws surrounding semicolons
+        $code = preg_replace('/\\s*;\\s*/', ';', $code);
 
-		// remove ws around urls
-		$code = preg_replace('/
+        // remove ws around urls
+        $code = preg_replace('/
 				url\\(      # url(
 				\\s*
 				([^\\)]+?)  # 1 = the URL (really just a bunch of non right parenthesis)
@@ -71,8 +72,8 @@ class StyleCompressor implements IContentFilter, Filters\IFilter
 				\\)         # )
 			/x', 'url($1)', $code);
 
-		// remove ws between rules and colons
-		$code = preg_replace('/
+        // remove ws between rules and colons
+        $code = preg_replace('/
 				\\s*
 				([{;])              # 1 = beginning of block or rule separator
 				\\s*
@@ -83,8 +84,9 @@ class StyleCompressor implements IContentFilter, Filters\IFilter
 				(\\b|[#\'"-])       # 3 = first character of a value
 			/x', '$1$2:$3', $code);
 
-		// remove ws in selectors
-		$code = preg_replace_callback('/
+        // remove ws in selectors
+        $code = preg_replace_callback(
+            '/
 				(?:              # non-capture
 					\\s*
 					[^~>+,\\s]+  # selector part
@@ -94,131 +96,138 @@ class StyleCompressor implements IContentFilter, Filters\IFilter
 				\\s*
 				[^~>+,\\s]+      # selector part
 				{                # open declaration block
-			/x'
-			, [$this, 'selectorsCB'], $code);
+			/x',
+            [$this, 'selectorsCB'],
+            $code
+        );
 
-		// minimize hex colors
-		$code = preg_replace('/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i', '$1#$2$3$4$5', $code);
+        // minimize hex colors
+        $code = preg_replace('/([^=])#([a-f\\d])\\2([a-f\\d])\\3([a-f\\d])\\4([\\s;\\}])/i', '$1#$2$3$4$5', $code);
 
-		// remove spaces between font families
-		$code = preg_replace_callback('/font-family:([^;}]+)([;}])/', [$this, 'fontFamilyCB'], $code);
+        // remove spaces between font families
+        $code = preg_replace_callback('/font-family:([^;}]+)([;}])/', [$this, 'fontFamilyCB'], $code);
 
-		$code = preg_replace('/@import\\s+url/', '@import url', $code);
+        $code = preg_replace('/@import\\s+url/', '@import url', $code);
 
-		// replace any ws involving newlines with a single newline
-		$code = preg_replace('/[ \\t]*\\n+\\s*/', "\n", $code);
+        // replace any ws involving newlines with a single newline
+        $code = preg_replace('/[ \\t]*\\n+\\s*/', "\n", $code);
 
-		// separate common descendent selectors w/ newlines (to limit line lengths)
-		$code = preg_replace('/([\\w#\\.\\*]+)\\s+([\\w#\\.\\*]+){/', "$1\n$2{", $code);
+        // separate common descendent selectors w/ newlines (to limit line lengths)
+        $code = preg_replace('/([\\w#\\.\\*]+)\\s+([\\w#\\.\\*]+){/', "$1\n$2{", $code);
 
-		// Use newline after 1st numeric value (to limit line lengths).
-		$code = preg_replace('/
+        // Use newline after 1st numeric value (to limit line lengths).
+        $code = preg_replace(
+            '/
 			((?:padding|margin|border|outline):\\d+(?:px|em)?) # 1 = prop : 1st numeric value
 			\\s+
-			/x'
-			, "$1\n", $code);
+			/x',
+            "$1\n",
+            $code
+        );
 
-		// prevent triggering IE6 bug: http://www.crankygeek.com/ie6pebug/
-		$code = preg_replace('/:first-l(etter|ine)\\{/', ':first-l$1 {', $code);
+        // prevent triggering IE6 bug: http://www.crankygeek.com/ie6pebug/
+        $code = preg_replace('/:first-l(etter|ine)\\{/', ':first-l$1 {', $code);
 
-		return trim($code);
-	}
+        return trim($code);
+    }
 
-	/**
-	 * Replace what looks like a set of selectors
-	 *
-	 * @param array $m regex matches
-	 *
-	 * @return string
-	 */
-	private function selectorsCB(array $m) : string
-	{
-		// remove ws around the combinators
-		return preg_replace('/\\s*([,>+~])\\s*/', '$1', $m[0]);
-	}
+    /**
+     * Replace what looks like a set of selectors
+     *
+     * @param array $m regex matches
+     *
+     * @return string
+     */
+    private function selectorsCB(array $m): string
+    {
+        // remove ws around the combinators
+        return preg_replace('/\\s*([,>+~])\\s*/', '$1', $m[0]);
+    }
 
-	/**
-	 * Process a comment and return a replacement
-	 *
-	 * @param array $m regex matches
-	 *
-	 * @return string
-	 */
-	protected function commentCB(array $m) : string
-	{
-		$hasSurroundingWs = (trim($m[0]) !== $m[1]);
-		$m = $m[1];
+    /**
+     * Process a comment and return a replacement
+     *
+     * @param array $m regex matches
+     *
+     * @return string
+     */
+    protected function commentCB(array $m): string
+    {
+        $hasSurroundingWs = (trim($m[0]) !== $m[1]);
+        $m = $m[1];
 
-		// $m is the comment content w/o the surrounding tokens,
-		// but the return value will replace the entire comment.
-		if ($m === 'keep') {
-			return '/**/';
-		}
+        // $m is the comment content w/o the surrounding tokens,
+        // but the return value will replace the entire comment.
+        if ($m === 'keep') {
+            return '/**/';
+        }
 
-		if ($m === '" "') {
-			// component of http://tantek.com/CSS/Examples/midpass.html
-			return '/*" "*/';
-		}
+        if ($m === '" "') {
+            // component of http://tantek.com/CSS/Examples/midpass.html
+            return '/*" "*/';
+        }
 
-		if (preg_match('@";\\}\\s*\\}/\\*\\s+@', $m)) {
-			// component of http://tantek.com/CSS/Examples/midpass.html
-			return '/*";}}/* */';
-		}
+        if (preg_match('@";\\}\\s*\\}/\\*\\s+@', $m)) {
+            // component of http://tantek.com/CSS/Examples/midpass.html
+            return '/*";}}/* */';
+        }
 
-		if ($this->_inHack) {
-			// inversion: feeding only to one browser
-			if (preg_match('@
+        if ($this->_inHack) {
+            // inversion: feeding only to one browser
+            if (
+                preg_match('@
 					^/               # comment started like /*/
 					\\s*
 					(\\S[\\s\\S]+?)  # has at least some non-ws content
 					\\s*
 					/\\*             # ends like /*/ or /**/
-				@x', $m, $n)) {
-				// end hack mode after this comment, but preserve the hack and comment content
-				$this->_inHack = FALSE;
+				@x', $m, $n)
+            ) {
+                // end hack mode after this comment, but preserve the hack and comment content
+                $this->_inHack = false;
 
-				return "/*/{$n[1]}/**/";
-			}
-		}
+                return "/*/{$n[1]}/**/";
+            }
+        }
 
-		if (substr($m, -1) === '\\') { // comment ends like \*/
-			// begin hack mode and preserve hack
-			$this->_inHack = TRUE;
+        if (substr($m, -1) === '\\') { // comment ends like \*/
+            // begin hack mode and preserve hack
+            $this->_inHack = true;
 
-			return '/*\\*/';
-		}
+            return '/*\\*/';
+        }
 
-		if ($m !== '' && $m[0] === '/') { // comment looks like /*/ foo */
-			// begin hack mode and preserve hack
-			$this->_inHack = TRUE;
+        if ($m !== '' && $m[0] === '/') { // comment looks like /*/ foo */
+            // begin hack mode and preserve hack
+            $this->_inHack = true;
 
-			return '/*/*/';
-		}
+            return '/*/*/';
+        }
 
-		if ($this->_inHack) {
-			// a regular comment ends hack mode but should be preserved
-			$this->_inHack = FALSE;
+        if ($this->_inHack) {
+            // a regular comment ends hack mode but should be preserved
+            $this->_inHack = false;
 
-			return '/**/';
-		}
+            return '/**/';
+        }
 
-		// Issue 107: if there's any surrounding whitespace, it may be important, so
-		// replace the comment with a single space
-		return $hasSurroundingWs // remove all other comments
-			? ' '
-			: '';
-	}
+        // Issue 107: if there's any surrounding whitespace, it may be important, so
+        // replace the comment with a single space
+        return $hasSurroundingWs // remove all other comments
+            ? ' '
+            : '';
+    }
 
-	/**
-	 * Process a font-family listing and return a replacement
-	 *
-	 * @param array $m regex matches
-	 *
-	 * @return string
-	 */
-	private function fontFamilyCB(array $m) : string
-	{
-		$m[1] = preg_replace('/
+    /**
+     * Process a font-family listing and return a replacement
+     *
+     * @param array $m regex matches
+     *
+     * @return string
+     */
+    private function fontFamilyCB(array $m): string
+    {
+        $m[1] = preg_replace('/
 				\\s*
 				(
 					"[^"]+"      # 1 = family in double qutoes
@@ -228,6 +237,6 @@ class StyleCompressor implements IContentFilter, Filters\IFilter
 				\\s*
 			/x', '$1', $m[1]);
 
-		return 'font-family:' . $m[1] . $m[2];
-	}
+        return 'font-family:' . $m[1] . $m[2];
+    }
 }
