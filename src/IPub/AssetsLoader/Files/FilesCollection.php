@@ -201,7 +201,7 @@ class FilesCollection implements IFilesCollection, \IteratorAggregate, \ArrayAcc
      *
      * @return \ArrayIterator|Entities\IFile[]
      */
-    public function getIterator()
+    public function getIterator() : \Traversable
     {
         return new \ArrayIterator($this->files);
     }
@@ -213,7 +213,7 @@ class FilesCollection implements IFilesCollection, \IteratorAggregate, \ArrayAcc
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset) : bool
     {
         return isset($this->files[$offset]);
     }
@@ -225,6 +225,7 @@ class FilesCollection implements IFilesCollection, \IteratorAggregate, \ArrayAcc
      *
      * @return Entities\IFile
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->files[$offset];
@@ -236,7 +237,7 @@ class FilesCollection implements IFilesCollection, \IteratorAggregate, \ArrayAcc
      * @param  string $offset
      * @param Entities\IFile $value
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value) : void
     {
         $this->files[$offset] = $value;
     }
@@ -246,7 +247,7 @@ class FilesCollection implements IFilesCollection, \IteratorAggregate, \ArrayAcc
      *
      * @param  string $offset
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset) : void
     {
         unset($this->files[$offset]);
     }
