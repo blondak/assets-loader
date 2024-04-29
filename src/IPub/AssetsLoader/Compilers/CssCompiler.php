@@ -54,7 +54,7 @@ class CssCompiler extends Compiler
 		$content = '';
 
 		// Check if file exists & is readable
-		if (file_exists($file) && is_readable($file)) {
+		if (file_exists($file) && is_readable($file) && !is_dir($file)) {
 			// Load the local CSS stylesheet
 			$content = file_get_contents($file);
 
