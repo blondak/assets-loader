@@ -213,21 +213,11 @@ class AssetsLoaderExtension extends DI\CompilerExtension
 
         $routerServiceName = $builder->getByType(Router::class) ?: 'router';
         $routerDefinition = $builder->getDefinition($routerServiceName);
-        $routerDefinition->setAutowired(false);
+        $routerDefinition->addSetup('prepend', [$this->prefix('@route.assets')]);
+        $routerDefinition->addSetup('prepend', [$this->prefix('@route.files')]);
 
-        $builder->addDefinition($this->prefix($routerServiceName), clone $routerDefinition);
-
-        $builder->removeDefinition($routerServiceName);
-        $routerDefinition = $builder->addDefinition($routerServiceName)
-          ->setType(RouteList::class)
-          ->addSetup('offsetSet', [null, $this->prefix('@route.assets')])
-          ->addSetup('offsetSet', [null, $this->prefix('@route.files')])
-          ->addSetup('offsetSet', [null, $this->prefix('@' . $routerServiceName)]);
-        ;
-
-          // Get web loader factory
-          $factory = $builder->getDefinition($this->prefix('factory'));
-
+        // Get web loader factory
+        $factory = $builder->getDefinition($this->prefix('factory'));
 
         // Get all registered filters
         foreach (array_keys($builder->findByTag(self::TAG_FILTER)) as $serviceName) {
