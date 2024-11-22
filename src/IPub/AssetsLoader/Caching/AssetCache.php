@@ -35,13 +35,17 @@ class AssetCache extends Caching\Cache
      *
      * @return array
      */
-    public function getItem(string $key): array
+    public function getItem(string $key): ?array
     {
         // Load item from cache storage
-        $item = $this->load($key);
+        if (($item = $this->load($key)) === null) {
+            return null;
+        }
 
         // Get content string
-        $content = $item[self::CONTENT];
+        if (!$content = $item[self::CONTENT] ?? null) {
+            return null;
+        }
 
         return [
             self::CONTENT_TYPE => $item[self::CONTENT_TYPE],
