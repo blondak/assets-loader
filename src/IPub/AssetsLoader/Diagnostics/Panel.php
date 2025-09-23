@@ -19,7 +19,7 @@ namespace IPub\AssetsLoader\Diagnostics;
 
 use Nette;
 use Nette\Application;
-use Latte\Runtime;
+use Latte\Essential;
 use Tracy;
 use Nette\DI\Container;
 
@@ -136,7 +136,7 @@ final class Panel implements Tracy\IBarPanel
                 . '</th><td>'
                 . $this->link($generated['id'], $generated['type'], $generated['lastModified'])
                 . '</td><td>'
-                . Runtime\Filters::bytes($generated['memory'])
+                . Essential\Filters::bytes($generated['memory'])
                 . '</td></tr>';
         }
 
