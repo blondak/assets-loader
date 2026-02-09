@@ -63,8 +63,8 @@ class AssetsLoaderPresenter implements Application\IPresenter
      * @param Caching\FileCache $fileCache
      */
     public function __construct(
-        ?Http\IRequest $httpRequest = null,
-        ?Application\IRouter $router = null,
+        ?Http\IRequest $httpRequest,
+        ?Application\IRouter $router,
         Caching\AssetCache $assetCache,
         Caching\FileCache $fileCache
     ) {
