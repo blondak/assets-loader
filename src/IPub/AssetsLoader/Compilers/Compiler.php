@@ -74,7 +74,7 @@ abstract class Compiler
      * @param Caching\AssetCache $cache
      * @param Diagnostics\Panel $debugPanel
      */
-    public function __construct(Caching\AssetCache $cache, Diagnostics\Panel $debugPanel = null)
+    public function __construct(Caching\AssetCache $cache, ?Diagnostics\Panel $debugPanel = null)
     {
         $this->cache = $cache;
         $this->debugPanel = $debugPanel;

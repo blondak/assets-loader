@@ -55,7 +55,7 @@ class FileCache extends Caching\Cache
      *
      * @return void
      */
-    public function clean(array $conditions = null): void
+    public function clean(?array $conditions = null): void
     {
         parent::clean([self::TAGS => ['ipub.assetsloader']]);
     }

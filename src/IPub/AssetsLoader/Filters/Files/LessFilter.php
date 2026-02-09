@@ -37,7 +37,7 @@ class LessFilter extends FilesFilter
     /**
      * @param \lessc|NULL $lc
      */
-    public function __construct(\lessc $lc = null)
+    public function __construct(?\lessc $lc = null)
     {
         $this->lc = $lc;
     }
